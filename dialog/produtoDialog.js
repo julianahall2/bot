@@ -108,7 +108,17 @@ class ProductDialog extends ComponentDialog {
             }
         }
 
-        // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
+        return await step.prompt(CHOICE_PROMPT, {
+            prompt: 'Deseja realizar outra operação?',
+            choices: ChoiceFactory.toChoices(['Sim', 'Não'])
+        });
+    }
+    
+    async finalStep(step) {
+        if (step.result.value === 'Sim') {
+            return await step.replaceDialog(this.initialDialogId);
+        }
+        await step.context.sendActivity('Obrigado por usar nosso serviço!');
         return await step.endDialog();
     }
 }

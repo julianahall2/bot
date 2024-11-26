@@ -8,12 +8,12 @@ class Extrato {
     urlApi = process.env.EXTRATO_URL_API;
     apiKey = process.env.GATEWAY_ACCESS_KEY;
 
-    async getExtrato(idUser, numeroCartao) {
+    async getExtrato(id, numeroCartao) {
         const headers = {
             'ocp-apim-subscription-key': this.apiKey
         };
 
-        return await axios.get(`${this.urlApi}/${idUser}?numeroCartao=${numeroCartao}`);
+        return await axios.get(`${this.urlApi}/${id}?numeroCartao=${numeroCartao}`, { headers });
     }
 
     formatExtrato(response) {
