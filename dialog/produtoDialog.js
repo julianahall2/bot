@@ -118,7 +118,7 @@ class ProductDialog extends ComponentDialog {
                 let transactions = await extrato.getExtrato(id, cardNumber);
                 
                 try {
-                    const ticketMedio = extrato.calculateTicketMedio(transactions);
+                    const ticketMedio = extrato.calculateTicketMedio(transactions.data);
                     await step.context.sendActivity(`O ticket médio das suas compras é: R$ ${ticketMedio.toFixed(2)}`);
                 } catch (error) {
                     await step.context.sendActivity('Não foi possível calcular o ticket médio. Verifique se há transações disponíveis.');
