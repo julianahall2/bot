@@ -37,7 +37,8 @@ class ProductDialog extends ComponentDialog {
             this.menuStep.bind(this),
             this.productNameStep.bind(this),
             this.cartaoNumberStep.bind(this),
-            this.confirmStep.bind(this)
+            this.confirmStep.bind(this),
+            this.finalStep.bind(this)
         ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
@@ -63,7 +64,7 @@ class ProductDialog extends ComponentDialog {
     async menuStep(step) {
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'Escolha a opção desejada',
-            choices: ChoiceFactory.toChoices(['Consultar Pedidos', 'Consultar Produtos', 'Extrato de Compras'])        });
+            choices: ChoiceFactory.toChoices(['Consultar Pedidos', 'Consultar Produtos', 'Extrato de Compras', 'Calcular Ticket Médio'])        });
     }
 
     async productNameStep(step) {
@@ -76,6 +77,9 @@ class ProductDialog extends ComponentDialog {
             }
             case "Consultar Produtos": {
                 return await step.prompt(NAME_PROMPT, 'Digite o nome do produto');        
+            }
+            case "Calcular Ticket Médio": {
+                return await step.prompt(NAME_PROMPT, 'Digite o seu Id');
             }
         }
     }
@@ -105,6 +109,21 @@ class ProductDialog extends ComponentDialog {
                 let card = produto.createProductCard(response.data[0]);
                 await step.context.sendActivity({ attachments: [card] });
                 break
+            }
+            case "Calcular Ticket Médio": {
+                let id = step.values.id; 
+                let cardNumber = step.result;
+    
+                let extrato = new Extrato();
+                let transactions = await extrato.getExtrato(id, cardNumber);
+                
+                try {
+                    const ticketMedio = extrato.calculateTicketMedio(transactions);
+                    await step.context.sendActivity(`O ticket médio das suas compras é: R$ ${ticketMedio.toFixed(2)}`);
+                } catch (error) {
+                    await step.context.sendActivity('Não foi possível calcular o ticket médio. Verifique se há transações disponíveis.');
+                }
+                break;
             }
         }
 

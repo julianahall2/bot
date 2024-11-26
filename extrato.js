@@ -25,6 +25,21 @@ class Extrato {
 
         return table;
     }
+
+    calculateTicketMedio(transactions) {
+    if (!Array.isArray(transactions) || transactions.length === 0) {
+        throw new Error("Nenhuma transação encontrada para calcular o ticket médio.");
+    }
+
+    const totalValue = transactions.reduce((sum, transaction) => {
+        return sum + (transaction.valor || 0);
+    }, 0);
+
+    const ticketMedio = totalValue / transactions.length;
+
+    return ticketMedio;
+}
+
 }
 
 module.exports.Extrato = Extrato;
